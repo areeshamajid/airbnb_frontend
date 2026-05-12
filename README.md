@@ -27,6 +27,7 @@ The goal was to:
 - Build a **Flutter frontend** that connects to the backend and lets users explore listings by state with a jurisdiction toggle
 
 This simulates a real-world compliance scenario where a backend gatekeeper controls which listings are visible based on approved jurisdictions.
+
 ---
 
 ## Project Overview
