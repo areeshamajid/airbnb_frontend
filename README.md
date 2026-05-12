@@ -13,41 +13,17 @@ The frontend allows users to filter listings by state and toggle a jurisdiction 
 
 ---
 
-## The Problem
+## Problem Statement
 
-The backend implements a **jurisdiction toggle system** that acts as a gatekeeper:
-- When **ON**, it filters listings to only show premium results from a specific approved state (VIC, NSW, QLD, or SA)
-- When **OFF**, it shows the top 100 listings across all states without filtering
+Modern short-term rental platforms like Airbnb operate across multiple legal jurisdictions, each with its own regulations around which properties can be listed and promoted. A key challenge for these platforms is ensuring that only **compliant, high-quality listings** are surfaced to users in specific regions.
 
-The challenge was building a frontend that could:
-1. Communicate with the Node.js backend over HTTP
-2. Display the filtered results cleanly
-3. Make the jurisdiction toggle visible and interactive for the user
+This project addresses that challenge by implementing a **jurisdiction-based filtering system** for Airbnb listings across 4 Australian states — Victoria, New South Wales, Queensland, and South Australia.
 
----
+The goal was to:
+- Build a **Node.js backend** that loads real Airbnb CSV data, ranks listings by a custom premium score, and exposes a filtered API
+- Build a **Flutter frontend** that connects to the backend and lets users explore listings by state with a jurisdiction toggle
 
-## How We Fixed It
-
-Several technical challenges were encountered and resolved:
-
-**1. CORS Error**  
-The browser blocked requests from the Flutter app (running on one port) to the Node backend (port 3000). Fixed by adding the `cors` package to the Node backend:
-```javascript
-const cors = require('cors');
-app.use(cors());
-```
-
-**2. OneDrive File Locking**  
-The Flutter project was initially inside an OneDrive folder, which caused file locking errors and prevented Flutter from building. Fixed by moving the project to `C:\src\airbnb_frontend` outside OneDrive.
-
-**3. Listing Limit**  
-The backend was defaulting to 500 listings regardless of the toggle state. Fixed by setting smart defaults:
-- Toggle **ON** → top 20 premium listings per state
-- Toggle **OFF** → top 100 listings across all states
-
-**4. Scroll View**  
-The listings were not scrollable initially. Fixed by wrapping the page body in a `SingleChildScrollView` and using `shrinkWrap: true` with `NeverScrollableScrollPhysics()` on the `ListView`.
-
+This simulates a real-world compliance scenario where a backend gatekeeper controls which listings are visible based on approved jurisdictions.
 ---
 
 ## How to Run
