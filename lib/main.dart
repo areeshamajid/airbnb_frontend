@@ -179,8 +179,12 @@ class _ListingsPageState extends State<ListingsPage> {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('Top ${_listings.length} premium listings — ${_stateLabels[_selectedState]}',
-                      style: const TextStyle(fontWeight: FontWeight.bold)),
+                  Text(
+                    _toggleOn
+                      ? 'Top ${_listings.length} premium listings — ${_stateLabels[_selectedState]}'
+                      : 'Airbnb Lisitings - ${_stateLabels[_selectedState]}',
+                    style: const TextStyle(fontWeight: FontWeight.bold),
+                  ),
                   const SizedBox(height: 8),
                   ListView.builder(
                     shrinkWrap: true,
