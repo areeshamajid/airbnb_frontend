@@ -85,7 +85,7 @@ class _ListingsPageState extends State<ListingsPage> {
         ),
         centerTitle: true,
       ),
-      body: Padding(
+      body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -106,13 +106,9 @@ class _ListingsPageState extends State<ListingsPage> {
                         const Text('State: '),
                         const SizedBox(width: 8),
                         Expanded(
-                          child: DropdownButtonFormField<String>(
+                          child: DropdownButton<String>(
                             value: _selectedState,
-                            decoration: InputDecoration(
-                              border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(8)),
-                              contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                            ),
+                            isExpanded: true,
                             items: _stateLabels.entries
                                 .map((e) => DropdownMenuItem(value: e.key, child: Text(e.value)))
                                 .toList(),
@@ -180,77 +176,75 @@ class _ListingsPageState extends State<ListingsPage> {
                 ),
               )
             else
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text('Top ${_listings.length} premium listings — ${_stateLabels[_selectedState]}',
-                        style: const TextStyle(fontWeight: FontWeight.bold)),
-                    const SizedBox(height: 8),
-                    Expanded(
-                      child: ListView.builder(
-                        itemCount: _listings.length,
-                        itemBuilder: (context, i) {
-                          final l = _listings[i];
-                          return Card(
-                            margin: const EdgeInsets.only(bottom: 10),
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(10)),
-                            child: Padding(
-                              padding: const EdgeInsets.all(14),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text('Top ${_listings.length} premium listings — ${_stateLabels[_selectedState]}',
+                      style: const TextStyle(fontWeight: FontWeight.bold)),
+                  const SizedBox(height: 8),
+                  ListView.builder(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemCount: _listings.length,
+                    itemBuilder: (context, i) {
+                      final l = _listings[i];
+                      return Card(
+                        margin: const EdgeInsets.only(bottom: 10),
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10)),
+                        child: Padding(
+                          padding: const EdgeInsets.all(14),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
                                 children: [
-                                  Row(
-                                    children: [
-                                      const Icon(Icons.home, color: Color(0xFFFF5A5F), size: 18),
-                                      const SizedBox(width: 6),
-                                      Expanded(
-                                        child: Text(
-                                          l['name'] ?? 'Listing ${i + 1}',
-                                          style: const TextStyle(fontWeight: FontWeight.bold),
-                                          maxLines: 2,
-                                          overflow: TextOverflow.ellipsis,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  const SizedBox(height: 6),
-                                  Row(
-                                    children: [
-                                      const Icon(Icons.location_on, size: 13, color: Colors.grey),
-                                      const SizedBox(width: 3),
-                                      Text(l['neighbourhood'] ?? l['suburb'] ?? '—',
-                                          style: const TextStyle(fontSize: 12, color: Colors.grey)),
-                                      const SizedBox(width: 8),
-                                      const Icon(Icons.bed, size: 13, color: Colors.grey),
-                                      const SizedBox(width: 3),
-                                      Text(l['room_type'] ?? '—',
-                                          style: const TextStyle(fontSize: 12, color: Colors.grey)),
-                                    ],
-                                  ),
-                                  const SizedBox(height: 6),
-                                  Row(
-                                    children: [
-                                      Text('\$${l['price'] ?? '?'}/night',
-                                          style: const TextStyle(
-                                              fontWeight: FontWeight.bold,
-                                              color: Color(0xFFFF5A5F))),
-                                      const Spacer(),
-                                      const Icon(Icons.star, size: 14, color: Colors.amber),
-                                      Text(' ${l['number_of_reviews'] ?? 0} reviews',
-                                          style: const TextStyle(fontSize: 12, color: Colors.grey)),
-                                    ],
+                                  const Icon(Icons.home, color: Color(0xFFFF5A5F), size: 18),
+                                  const SizedBox(width: 6),
+                                  Expanded(
+                                    child: Text(
+                                      l['name'] ?? 'Listing ${i + 1}',
+                                      style: const TextStyle(fontWeight: FontWeight.bold),
+                                      maxLines: 2,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
                                   ),
                                 ],
                               ),
-                            ),
-                          );
-                        },
-                      ),
-                    ),
-                  ],
-                ),
+                              const SizedBox(height: 6),
+                              Row(
+                                children: [
+                                  const Icon(Icons.location_on, size: 13, color: Colors.grey),
+                                  const SizedBox(width: 3),
+                                  Text(l['neighbourhood'] ?? l['suburb'] ?? '—',
+                                      style: const TextStyle(fontSize: 12, color: Colors.grey)),
+                                  const SizedBox(width: 8),
+                                  const Icon(Icons.bed, size: 13, color: Colors.grey),
+                                  const SizedBox(width: 3),
+                                  Text(l['room_type'] ?? '—',
+                                      style: const TextStyle(fontSize: 12, color: Colors.grey)),
+                                ],
+                              ),
+                              const SizedBox(height: 6),
+                              Row(
+                                children: [
+                                  Text('\$${l['price'] ?? '?'}/night',
+                                      style: const TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          color: Color(0xFFFF5A5F))),
+                                  const Spacer(),
+                                  const Icon(Icons.star, size: 14, color: Colors.amber),
+                                  Text(' ${l['number_of_reviews'] ?? 0} reviews',
+                                      style: const TextStyle(fontSize: 12, color: Colors.grey)),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                ],
               ),
           ],
         ),
