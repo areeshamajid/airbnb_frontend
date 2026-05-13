@@ -1,5 +1,3 @@
-// lib/listings_page.dart
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -23,17 +21,16 @@ class ListingsPage extends StatelessWidget {
 
     return BlocBuilder<ListingsCubit, ListingsState>(
       builder: (context, state) {
-        // Resolve current filter values from state
         final selectedState = switch (state) {
-          ListingsSuccess s  => s.selectedState,
-          ListingsError e    => e.selectedState,
+          ListingsSuccess s       => s.selectedState,
+          ListingsError e         => e.selectedState,
           ListingsFilterUpdated f => f.selectedState,
           _ => context.read<ListingsCubit>().selectedState,
         };
 
         final toggleOn = switch (state) {
-          ListingsSuccess s  => s.toggleOn,
-          ListingsError e    => e.toggleOn,
+          ListingsSuccess s       => s.toggleOn,
+          ListingsError e         => e.toggleOn,
           ListingsFilterUpdated f => f.toggleOn,
           _ => context.read<ListingsCubit>().toggleOn,
         };
@@ -187,8 +184,7 @@ class ListingsPage extends StatelessWidget {
                             : l10n.allListingsTitle(
                                 stateLabels[selectedState]!,
                               ),
-                        style:
-                            const TextStyle(fontWeight: FontWeight.bold),
+                        style: const TextStyle(fontWeight: FontWeight.bold),
                       ),
                       const SizedBox(height: 8),
                       ListView.builder(
@@ -196,7 +192,7 @@ class ListingsPage extends StatelessWidget {
                         physics: const NeverScrollableScrollPhysics(),
                         itemCount: state.listings.length,
                         itemBuilder: (context, i) {
-                          final l = state.listings[i];
+                          final listing = state.listings[i];
                           return Card(
                             margin: const EdgeInsets.only(bottom: 10),
                             shape: RoundedRectangleBorder(
@@ -209,12 +205,11 @@ class ListingsPage extends StatelessWidget {
                                   Row(
                                     children: [
                                       const Icon(Icons.home,
-                                          color: Color(0xFFFF5A5F),
-                                          size: 18),
+                                          color: Color(0xFFFF5A5F), size: 18),
                                       const SizedBox(width: 6),
                                       Expanded(
                                         child: Text(
-                                          l['name'] ??
+                                          listing.name ??
                                               l10n.listingFallbackName(i + 1),
                                           style: const TextStyle(
                                               fontWeight: FontWeight.bold),
@@ -231,22 +226,20 @@ class ListingsPage extends StatelessWidget {
                                           size: 13, color: Colors.grey),
                                       const SizedBox(width: 3),
                                       Text(
-                                        l['neighbourhood'] ??
-                                            l['suburb'] ??
+                                        listing.neighbourhood ??
+                                            listing.suburb ??
                                             '—',
                                         style: const TextStyle(
-                                            fontSize: 12,
-                                            color: Colors.grey),
+                                            fontSize: 12, color: Colors.grey),
                                       ),
                                       const SizedBox(width: 8),
                                       const Icon(Icons.bed,
                                           size: 13, color: Colors.grey),
                                       const SizedBox(width: 3),
                                       Text(
-                                        l['room_type'] ?? '—',
+                                        listing.roomType ?? '—',
                                         style: const TextStyle(
-                                            fontSize: 12,
-                                            color: Colors.grey),
+                                            fontSize: 12, color: Colors.grey),
                                       ),
                                     ],
                                   ),
@@ -255,7 +248,7 @@ class ListingsPage extends StatelessWidget {
                                     children: [
                                       Text(
                                         l10n.pricePerNight(
-                                            l['price']?.toString() ?? '?'),
+                                            listing.price ?? '?'),
                                         style: const TextStyle(
                                           fontWeight: FontWeight.bold,
                                           color: Color(0xFFFF5A5F),
@@ -265,10 +258,9 @@ class ListingsPage extends StatelessWidget {
                                       const Icon(Icons.star,
                                           size: 14, color: Colors.amber),
                                       Text(
-                                        ' ${l10n.reviewCount(l['number_of_reviews'] ?? 0)}',
+                                        ' ${l10n.reviewCount(listing.numberOfReviews ?? 0)}',
                                         style: const TextStyle(
-                                            fontSize: 12,
-                                            color: Colors.grey),
+                                            fontSize: 12, color: Colors.grey),
                                       ),
                                     ],
                                   ),

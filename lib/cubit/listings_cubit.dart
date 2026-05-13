@@ -5,6 +5,7 @@
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../models/listing_model.dart';
 import '../repository/listings_repository.dart';
 import '../repository/listings_repository_impl.dart';
 

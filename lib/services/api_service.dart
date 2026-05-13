@@ -6,18 +6,13 @@
 
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import '../models/listing_model.dart';
 
 class ApiService {
-  // Base URL — change this once if backend moves
   static const String _baseUrl = 'http://localhost:3000';
-
-  // Timeout duration — centralised so it's easy to adjust
   static const Duration _timeout = Duration(seconds: 10);
 
-  /// Fetches listings from the backend.
-  /// Returns the decoded response body as a [List<dynamic>].
-  /// Throws an [Exception] on failure so the repository can handle it.
-  Future<List<dynamic>> fetchListings({
+  Future<List<ListingModel>> fetchListings({
     required String selectedState,
     required bool toggleOn,
   }) async {
@@ -31,7 +26,12 @@ class ApiService {
 
     if (response.statusCode == 200) {
       final data = jsonDecode(response.body);
-      return data is List ? data : (data['listings'] ?? data['data'] ?? []);
+      final rawList = data is List ? data : (data['listings'] ?? data['data'] ?? []);
+
+      // Convert each map to a typed ListingModel
+      return (rawList as List)
+          .map((item) => ListingModel.fromJson(item as Map<String, dynamic>))
+          .toList();
     } else {
       throw Exception('Server error: ${response.statusCode}');
     }
