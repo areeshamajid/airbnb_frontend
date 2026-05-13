@@ -1,8 +1,7 @@
-// lib/theme/app_spacing.dart
-//
+
 // All spacing constants in one place.
-// No more hardcoded SizedBox(height: 16) scattered around the app.
-// To change spacing globally, update it here only.
+// No more hardcoded SizedBox
+
 
 class AppSpacing {
   AppSpacing._(); // prevent instantiation

@@ -1,5 +1,4 @@
-// lib/theme/app_theme.dart
-//
+
 // Single source of truth for all colors and theme data.
 // No more Color(0xFFFF5A5F) scattered around the app.
 // To rebrand the app, update colors here only.

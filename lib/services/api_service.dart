@@ -1,7 +1,6 @@
-// lib/services/api_service.dart
-//
+
 // Responsible for raw HTTP communication only.
-// No business logic — just makes the request and returns the response.
+//  makes the request and returns the response.
 // If the API base URL changes, only this file needs updating.
 
 import 'dart:convert';

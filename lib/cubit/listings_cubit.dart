@@ -1,7 +1,5 @@
-// lib/cubit/listings_cubit.dart
-//
-// Cubit only talks to the repository — no HTTP knowledge here.
-// This keeps business logic separate from data fetching.
+
+// Cubit only talks to the repository 
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -17,7 +15,7 @@ class ListingsCubit extends Cubit<ListingsState> {
   String selectedState = 'vic';
   bool toggleOn = true;
 
-  // Repository is injected — defaults to real implementation
+  // Repository is injected; defaults to real implementation
   ListingsCubit({ListingsRepository? repository})
       : _repository = repository ?? ListingsRepositoryImpl(),
         super(ListingsInitial());

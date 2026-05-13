@@ -1,5 +1,6 @@
-// lib/main.dart
-
+// Entry point of the application.
+// This file should stay lean
+// Adding a new feature should not require changes to this file.
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -9,9 +10,11 @@ import 'listings_page.dart';
 import 'localization/app_localizations.dart';
 import 'theme/app_theme.dart';
 
+/// The root entry point of the Flutter application.
 void main() {
   runApp(const AirbnbApp());
 }
+
 
 class AirbnbApp extends StatelessWidget {
   const AirbnbApp({super.key});
@@ -23,6 +26,7 @@ class AirbnbApp extends StatelessWidget {
       child: MaterialApp(
         onGenerateTitle: (ctx) => AppLocalizations.of(ctx).appTitle,
         debugShowCheckedModeBanner: false,
+         // All colors, text styles, and component themes are defined in AppTheme.
         theme: AppTheme.lightTheme,
         localizationsDelegates: const [
           AppLocalizations.delegate,
@@ -33,6 +37,7 @@ class AirbnbApp extends StatelessWidget {
         supportedLocales: const [
           Locale('en'),
         ],
+        // The first screen the user sees when the app launches.
         home: const ListingsPage(),
       ),
     );

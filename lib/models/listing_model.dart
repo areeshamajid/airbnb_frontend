@@ -1,9 +1,7 @@
-// lib/models/listing_model.dart
-//
+
 // Freezed model for a single listing.
 // - All fields are typed and documented
 // - jsonKey maps to the exact backend field names
-// - Nullable fields are explicit — no more null checks on dynamic maps
 
 import 'package:freezed_annotation/freezed_annotation.dart';
 
