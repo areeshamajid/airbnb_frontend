@@ -4,13 +4,13 @@ part of 'listings_cubit.dart';
 
 abstract class ListingsState {}
 
-// Initial state — nothing has happened yet
+// Initial state
 class ListingsInitial extends ListingsState {}
 
-// Loading state — fetch in progress
+// Loading state 
 class ListingsLoading extends ListingsState {}
 
-// Success state — listings fetched successfully
+// Success state 
 class ListingsSuccess extends ListingsState {
   final List<dynamic> listings;
   final String selectedState;
@@ -23,7 +23,7 @@ class ListingsSuccess extends ListingsState {
   });
 }
 
-// Error state — something went wrong
+// Error state 
 class ListingsError extends ListingsState {
   final String message;
   final String selectedState;
@@ -36,7 +36,7 @@ class ListingsError extends ListingsState {
   });
 }
 
-// Filter changed state — user changed state or toggle
+// Filter changed state  
 class ListingsFilterUpdated extends ListingsState {
   final String selectedState;
   final bool toggleOn;

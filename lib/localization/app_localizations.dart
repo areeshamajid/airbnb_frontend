@@ -46,7 +46,7 @@ abstract class AppLocalizations {
 }
 
 // ─────────────────────────────────────────────
-// English implementation
+// Text
 // ─────────────────────────────────────────────
 class AppLocalizationsEn extends AppLocalizations {
   @override String get appTitle           => 'Airbnb Premium Listings';

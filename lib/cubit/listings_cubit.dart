@@ -1,16 +1,25 @@
 // lib/cubit/listings_cubit.dart
+//
+// Cubit only talks to the repository — no HTTP knowledge here.
+// This keeps business logic separate from data fetching.
 
-import 'dart:convert';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:http/http.dart' as http;
+
+import '../repository/listings_repository.dart';
+import '../repository/listings_repository_impl.dart';
 
 part 'listings_state.dart';
 
 class ListingsCubit extends Cubit<ListingsState> {
+  final ListingsRepository _repository;
+
   String selectedState = 'vic';
   bool toggleOn = true;
 
-  ListingsCubit() : super(ListingsInitial());
+  // Repository is injected — defaults to real implementation
+  ListingsCubit({ListingsRepository? repository})
+      : _repository = repository ?? ListingsRepositoryImpl(),
+        super(ListingsInitial());
 
   void updateState(String newState) {
     selectedState = newState;
@@ -31,37 +40,22 @@ class ListingsCubit extends Cubit<ListingsState> {
   Future<void> fetchListings() async {
     emit(ListingsLoading());
 
-    final uri = Uri.parse(
-      'http://localhost:3000/listings'
-      '?stateToggle=${toggleOn ? "on" : "off"}'
-      '&allowedStates=$selectedState',
-    );
-
     try {
-      final response =
-          await http.get(uri).timeout(const Duration(seconds: 10));
+      final listings = await _repository.getListings(
+        selectedState: selectedState,
+        toggleOn: toggleOn,
+      );
 
-      if (response.statusCode == 200) {
-        final data = jsonDecode(response.body);
-        final listings =
-            data is List ? data : (data['listings'] ?? data['data'] ?? []);
-
-        emit(ListingsSuccess(
-          listings: listings,
-          selectedState: selectedState,
-          toggleOn: toggleOn,
-        ));
-      } else {
-        emit(ListingsError(
-          message: 'Server error: ${response.statusCode}',
-          selectedState: selectedState,
-          toggleOn: toggleOn,
-        ));
-      }
-    } catch (_) {
+      emit(ListingsSuccess(
+        listings: listings,
+        selectedState: selectedState,
+        toggleOn: toggleOn,
+      ));
+    } catch (e) {
       emit(ListingsError(
-        message:
-            'Could not connect to backend.\nMake sure your Node server is running on port 3000.',
+        message: e.toString().contains('Server error')
+            ? e.toString().replaceAll('Exception: ', '')
+            : 'Could not connect to backend.\nMake sure your Node server is running on port 3000.',
         selectedState: selectedState,
         toggleOn: toggleOn,
       ));
