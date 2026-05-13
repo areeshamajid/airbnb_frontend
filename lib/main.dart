@@ -1,28 +1,48 @@
+// lib/main.dart
 import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:http/http.dart' as http;
+
+import 'localization/app_localizations.dart';
 
 void main() {
   runApp(const AirbnbApp());
 }
 
+// ─────────────────────────────────────────────
+// App root
+// ─────────────────────────────────────────────
 class AirbnbApp extends StatelessWidget {
   const AirbnbApp({super.key});
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Airbnb Premium Listings',
+      onGenerateTitle: (ctx) => AppLocalizations.of(ctx).appTitle,
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFFFF5A5F)),
         useMaterial3: true,
       ),
+      localizationsDelegates: const [
+        AppLocalizations.delegate,
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      supportedLocales: const [
+        Locale('en'),
+      ],
       home: const ListingsPage(),
     );
   }
 }
 
+// ─────────────────────────────────────────────
+// Listings page
+// ─────────────────────────────────────────────
 class ListingsPage extends StatefulWidget {
   const ListingsPage({super.key});
 
@@ -37,14 +57,14 @@ class _ListingsPageState extends State<ListingsPage> {
   bool _loading = false;
   String? _error;
 
-  final Map<String, String> _stateLabels = {
-    'vic': 'VIC – Melbourne',
-    'nsw': 'NSW – Sydney',
-    'qld': 'QLD – Brisbane',
-    'sa':  'SA – Barossa Valley',
-  };
+  Map<String, String> _stateLabels(AppLocalizations l10n) => {
+        'vic': l10n.stateVic,
+        'nsw': l10n.stateNsw,
+        'qld': l10n.stateQld,
+        'sa': l10n.stateSa,
+      };
 
-  Future<void> _fetchListings() async {
+  Future<void> _fetchListings(AppLocalizations l10n) async {
     setState(() {
       _loading = true;
       _error = null;
@@ -52,21 +72,25 @@ class _ListingsPageState extends State<ListingsPage> {
     });
 
     final uri = Uri.parse(
-      'http://localhost:3000/listings?stateToggle=${_toggleOn ? "on" : "off"}&allowedStates=$_selectedState',
+      'http://localhost:3000/listings'
+      '?stateToggle=${_toggleOn ? "on" : "off"}'
+      '&allowedStates=$_selectedState',
     );
 
     try {
-      final response = await http.get(uri).timeout(const Duration(seconds: 10));
+      final response =
+          await http.get(uri).timeout(const Duration(seconds: 10));
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
         setState(() {
-          _listings = data is List ? data : (data['listings'] ?? data['data'] ?? []);
+          _listings =
+              data is List ? data : (data['listings'] ?? data['data'] ?? []);
         });
       } else {
-        setState(() => _error = 'Server error: ${response.statusCode}');
+        setState(() => _error = l10n.serverError(response.statusCode));
       }
-    } catch (e) {
-      setState(() => _error = 'Could not connect to backend.\nMake sure your Node server is running on port 3000.');
+    } catch (_) {
+      setState(() => _error = l10n.connectionError);
     } finally {
       setState(() => _loading = false);
     }
@@ -74,14 +98,17 @@ class _ListingsPageState extends State<ListingsPage> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    final stateLabels = _stateLabels(l10n);
+
     return Scaffold(
       backgroundColor: const Color(0xFFF7F7F7),
       appBar: AppBar(
         backgroundColor: const Color(0xFFFF5A5F),
         foregroundColor: Colors.white,
-        title: const Text(
-          'Airbnb Premium Listings',
-          style: TextStyle(fontWeight: FontWeight.bold),
+        title: Text(
+          l10n.appTitle,
+          style: const TextStyle(fontWeight: FontWeight.bold),
         ),
         centerTitle: true,
       ),
@@ -90,29 +117,36 @@ class _ListingsPageState extends State<ListingsPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            // ── Filter card ───────────────────────────
             Card(
               elevation: 2,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12)),
               child: Padding(
                 padding: const EdgeInsets.all(16),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text('Filter Listings',
-                        style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                    Text(
+                      l10n.filterListings,
+                      style: const TextStyle(
+                          fontSize: 16, fontWeight: FontWeight.bold),
+                    ),
                     const SizedBox(height: 12),
                     Row(
                       children: [
-                        const Text('State: '),
+                        Text(l10n.stateLabel),
                         const SizedBox(width: 8),
                         Expanded(
                           child: DropdownButton<String>(
                             value: _selectedState,
                             isExpanded: true,
-                            items: _stateLabels.entries
-                                .map((e) => DropdownMenuItem(value: e.key, child: Text(e.value)))
+                            items: stateLabels.entries
+                                .map((e) => DropdownMenuItem(
+                                    value: e.key, child: Text(e.value)))
                                 .toList(),
-                            onChanged: (v) => setState(() => _selectedState = v!),
+                            onChanged: (v) =>
+                                setState(() => _selectedState = v!),
                           ),
                         ),
                       ],
@@ -120,15 +154,20 @@ class _ListingsPageState extends State<ListingsPage> {
                     const SizedBox(height: 8),
                     Row(
                       children: [
-                        const Text('Jurisdiction filter:'),
+                        Text(l10n.jurisdictionFilter),
                         Switch(
                           value: _toggleOn,
                           activeColor: const Color(0xFFFF5A5F),
                           onChanged: (v) => setState(() => _toggleOn = v),
                         ),
-                        Text(_toggleOn ? 'ON' : 'OFF',
-                            style: TextStyle(
-                                color: _toggleOn ? const Color(0xFFFF5A5F) : Colors.grey)),
+                        Text(
+                          _toggleOn ? l10n.toggleOn : l10n.toggleOff,
+                          style: TextStyle(
+                            color: _toggleOn
+                                ? const Color(0xFFFF5A5F)
+                                : Colors.grey,
+                          ),
+                        ),
                       ],
                     ),
                     const SizedBox(height: 8),
@@ -140,17 +179,23 @@ class _ListingsPageState extends State<ListingsPage> {
                           foregroundColor: Colors.white,
                           shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(8)),
-                          padding: const EdgeInsets.symmetric(vertical: 14),
+                          padding:
+                              const EdgeInsets.symmetric(vertical: 14),
                         ),
-                        onPressed: _loading ? null : _fetchListings,
+                        onPressed:
+                            _loading ? null : () => _fetchListings(l10n),
                         child: _loading
                             ? const SizedBox(
                                 height: 20,
                                 width: 20,
                                 child: CircularProgressIndicator(
-                                    color: Colors.white, strokeWidth: 2))
-                            : const Text('Fetch Premium Listings',
-                                style: TextStyle(fontWeight: FontWeight.bold)),
+                                    color: Colors.white, strokeWidth: 2),
+                              )
+                            : Text(
+                                l10n.fetchButton,
+                                style: const TextStyle(
+                                    fontWeight: FontWeight.bold),
+                              ),
                       ),
                     ),
                   ],
@@ -158,21 +203,27 @@ class _ListingsPageState extends State<ListingsPage> {
               ),
             ),
             const SizedBox(height: 16),
+
+            // ── Error / empty / listings ──────────────
             if (_error != null)
               Center(
                 child: Padding(
                   padding: const EdgeInsets.all(24),
-                  child: Text(_error!,
-                      textAlign: TextAlign.center,
-                      style: const TextStyle(color: Colors.red)),
+                  child: Text(
+                    _error!,
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(color: Colors.red),
+                  ),
                 ),
               )
             else if (_listings.isEmpty && !_loading)
-              const Center(
+              Center(
                 child: Padding(
-                  padding: EdgeInsets.all(40),
-                  child: Text('Select a state and press Fetch',
-                      style: TextStyle(color: Colors.grey)),
+                  padding: const EdgeInsets.all(40),
+                  child: Text(
+                    l10n.emptyState,
+                    style: const TextStyle(color: Colors.grey),
+                  ),
                 ),
               )
             else
@@ -181,8 +232,13 @@ class _ListingsPageState extends State<ListingsPage> {
                 children: [
                   Text(
                     _toggleOn
-                      ? 'Top ${_listings.length} premium listings — ${_stateLabels[_selectedState]}'
-                      : 'Airbnb Lisitings - ${_stateLabels[_selectedState]}',
+                        ? l10n.premiumListingsTitle(
+                            _listings.length,
+                            stateLabels[_selectedState]!,
+                          )
+                        : l10n.allListingsTitle(
+                            stateLabels[_selectedState]!,
+                          ),
                     style: const TextStyle(fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 8),
@@ -203,12 +259,15 @@ class _ListingsPageState extends State<ListingsPage> {
                             children: [
                               Row(
                                 children: [
-                                  const Icon(Icons.home, color: Color(0xFFFF5A5F), size: 18),
+                                  const Icon(Icons.home,
+                                      color: Color(0xFFFF5A5F), size: 18),
                                   const SizedBox(width: 6),
                                   Expanded(
                                     child: Text(
-                                      l['name'] ?? 'Listing ${i + 1}',
-                                      style: const TextStyle(fontWeight: FontWeight.bold),
+                                      l['name'] ??
+                                          l10n.listingFallbackName(i + 1),
+                                      style: const TextStyle(
+                                          fontWeight: FontWeight.bold),
                                       maxLines: 2,
                                       overflow: TextOverflow.ellipsis,
                                     ),
@@ -218,28 +277,44 @@ class _ListingsPageState extends State<ListingsPage> {
                               const SizedBox(height: 6),
                               Row(
                                 children: [
-                                  const Icon(Icons.location_on, size: 13, color: Colors.grey),
+                                  const Icon(Icons.location_on,
+                                      size: 13, color: Colors.grey),
                                   const SizedBox(width: 3),
-                                  Text(l['neighbourhood'] ?? l['suburb'] ?? '—',
-                                      style: const TextStyle(fontSize: 12, color: Colors.grey)),
+                                  Text(
+                                    l['neighbourhood'] ?? l['suburb'] ?? '—',
+                                    style: const TextStyle(
+                                        fontSize: 12, color: Colors.grey),
+                                  ),
                                   const SizedBox(width: 8),
-                                  const Icon(Icons.bed, size: 13, color: Colors.grey),
+                                  const Icon(Icons.bed,
+                                      size: 13, color: Colors.grey),
                                   const SizedBox(width: 3),
-                                  Text(l['room_type'] ?? '—',
-                                      style: const TextStyle(fontSize: 12, color: Colors.grey)),
+                                  Text(
+                                    l['room_type'] ?? '—',
+                                    style: const TextStyle(
+                                        fontSize: 12, color: Colors.grey),
+                                  ),
                                 ],
                               ),
                               const SizedBox(height: 6),
                               Row(
                                 children: [
-                                  Text('\$${l['price'] ?? '?'}/night',
-                                      style: const TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          color: Color(0xFFFF5A5F))),
+                                  Text(
+                                    l10n.pricePerNight(
+                                        l['price']?.toString() ?? '?'),
+                                    style: const TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      color: Color(0xFFFF5A5F),
+                                    ),
+                                  ),
                                   const Spacer(),
-                                  const Icon(Icons.star, size: 14, color: Colors.amber),
-                                  Text(' ${l['number_of_reviews'] ?? 0} reviews',
-                                      style: const TextStyle(fontSize: 12, color: Colors.grey)),
+                                  const Icon(Icons.star,
+                                      size: 14, color: Colors.amber),
+                                  Text(
+                                    ' ${l10n.reviewCount(int.tryParse(l['number_of_reviews']?.toString() ?? '0') ?? 0)}',
+                                    style: const TextStyle(
+                                        fontSize: 12, color: Colors.grey),
+                                  ),
                                 ],
                               ),
                             ],

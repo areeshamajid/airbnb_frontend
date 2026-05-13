@@ -1,0 +1,81 @@
+{
+  "@@locale": "en",
+
+  "appTitle": "Airbnb Premium Listings",
+  "@appTitle": { "description": "The title of the application" },
+
+  "filterListings": "Filter Listings",
+  "@filterListings": { "description": "Filter card heading" },
+
+  "stateLabel": "State:",
+  "@stateLabel": { "description": "Label before state dropdown" },
+
+  "jurisdictionFilter": "Jurisdiction filter:",
+  "@jurisdictionFilter": { "description": "Label before toggle switch" },
+
+  "toggleOn": "ON",
+  "@toggleOn": { "description": "Toggle switch ON label" },
+
+  "toggleOff": "OFF",
+  "@toggleOff": { "description": "Toggle switch OFF label" },
+
+  "fetchButton": "Fetch Premium Listings",
+  "@fetchButton": { "description": "Main fetch button label" },
+
+  "serverError": "Server error: {code}",
+  "@serverError": {
+    "description": "Error message when server returns non-200",
+    "placeholders": { "code": { "type": "int" } }
+  },
+
+  "connectionError": "Could not connect to backend.\nMake sure your Node server is running on port 3000.",
+  "@connectionError": { "description": "Error when backend is unreachable" },
+
+  "emptyState": "Select a state and press Fetch",
+  "@emptyState": { "description": "Placeholder shown before any fetch" },
+
+  "premiumListingsTitle": "Top {count} premium listings — {state}",
+  "@premiumListingsTitle": {
+    "description": "Heading when jurisdiction filter is ON",
+    "placeholders": {
+      "count": { "type": "int" },
+      "state": { "type": "String" }
+    }
+  },
+
+  "allListingsTitle": "Airbnb Listings - {state}",
+  "@allListingsTitle": {
+    "description": "Heading when jurisdiction filter is OFF",
+    "placeholders": { "state": { "type": "String" } }
+  },
+
+  "listingFallbackName": "Listing {index}",
+  "@listingFallbackName": {
+    "description": "Fallback name for a listing card",
+    "placeholders": { "index": { "type": "int" } }
+  },
+
+  "pricePerNight": "${price}/night",
+  "@pricePerNight": {
+    "description": "Price label on listing card",
+    "placeholders": { "price": { "type": "String" } }
+  },
+
+  "reviewCount": "{count} reviews",
+  "@reviewCount": {
+    "description": "Review count label on listing card",
+    "placeholders": { "count": { "type": "int" } }
+  },
+
+  "stateVic": "VIC – Melbourne",
+  "@stateVic": { "description": "Victoria state label" },
+
+  "stateNsw": "NSW – Sydney",
+  "@stateNsw": { "description": "New South Wales state label" },
+
+  "stateQld": "QLD – Brisbane",
+  "@stateQld": { "description": "Queensland state label" },
+
+  "stateSa": "SA – Barossa Valley",
+  "@stateSa": { "description": "South Australia state label" }
+}
