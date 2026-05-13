@@ -7,6 +7,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'cubit/listings_cubit.dart';
 import 'listings_page.dart';
 import 'localization/app_localizations.dart';
+import 'theme/app_theme.dart';
 
 void main() {
   runApp(const AirbnbApp());
@@ -22,10 +23,7 @@ class AirbnbApp extends StatelessWidget {
       child: MaterialApp(
         onGenerateTitle: (ctx) => AppLocalizations.of(ctx).appTitle,
         debugShowCheckedModeBanner: false,
-        theme: ThemeData(
-          colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFFFF5A5F)),
-          useMaterial3: true,
-        ),
+        theme: AppTheme.lightTheme,
         localizationsDelegates: const [
           AppLocalizations.delegate,
           GlobalMaterialLocalizations.delegate,

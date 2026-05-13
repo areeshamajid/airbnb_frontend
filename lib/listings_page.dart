@@ -1,8 +1,12 @@
+// lib/listings_page.dart
+
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'cubit/listings_cubit.dart';
 import 'localization/app_localizations.dart';
+import 'theme/app_spacing.dart';
+import 'theme/app_theme.dart';
 
 class ListingsPage extends StatelessWidget {
   const ListingsPage({super.key});
@@ -36,28 +40,18 @@ class ListingsPage extends StatelessWidget {
         };
 
         return Scaffold(
-          backgroundColor: const Color(0xFFF7F7F7),
           appBar: AppBar(
-            backgroundColor: const Color(0xFFFF5A5F),
-            foregroundColor: Colors.white,
-            title: Text(
-              l10n.appTitle,
-              style: const TextStyle(fontWeight: FontWeight.bold),
-            ),
-            centerTitle: true,
+            title: Text(l10n.appTitle),
           ),
           body: SingleChildScrollView(
-            padding: const EdgeInsets.all(16),
+            padding: const EdgeInsets.all(AppSpacing.pagePadding),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 // ── Filter card ───────────────────────────
                 Card(
-                  elevation: 2,
-                  shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12)),
                   child: Padding(
-                    padding: const EdgeInsets.all(16),
+                    padding: const EdgeInsets.all(AppSpacing.cardPadding),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -66,11 +60,11 @@ class ListingsPage extends StatelessWidget {
                           style: const TextStyle(
                               fontSize: 16, fontWeight: FontWeight.bold),
                         ),
-                        const SizedBox(height: 12),
+                        const SizedBox(height: AppSpacing.md),
                         Row(
                           children: [
                             Text(l10n.stateLabel),
-                            const SizedBox(width: 8),
+                            const SizedBox(width: AppSpacing.sm),
                             Expanded(
                               child: DropdownButton<String>(
                                 value: selectedState,
@@ -86,13 +80,12 @@ class ListingsPage extends StatelessWidget {
                             ),
                           ],
                         ),
-                        const SizedBox(height: 8),
+                        const SizedBox(height: AppSpacing.sm),
                         Row(
                           children: [
                             Text(l10n.jurisdictionFilter),
                             Switch(
                               value: toggleOn,
-                              activeColor: const Color(0xFFFF5A5F),
                               onChanged: (v) => context
                                   .read<ListingsCubit>()
                                   .updateToggle(v),
@@ -101,24 +94,16 @@ class ListingsPage extends StatelessWidget {
                               toggleOn ? l10n.toggleOn : l10n.toggleOff,
                               style: TextStyle(
                                 color: toggleOn
-                                    ? const Color(0xFFFF5A5F)
-                                    : Colors.grey,
+                                    ? AppColors.primary
+                                    : AppColors.textGrey,
                               ),
                             ),
                           ],
                         ),
-                        const SizedBox(height: 8),
+                        const SizedBox(height: AppSpacing.sm),
                         SizedBox(
                           width: double.infinity,
                           child: ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: const Color(0xFFFF5A5F),
-                              foregroundColor: Colors.white,
-                              shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(8)),
-                              padding:
-                                  const EdgeInsets.symmetric(vertical: 14),
-                            ),
                             onPressed: state is ListingsLoading
                                 ? null
                                 : () => context
@@ -126,10 +111,11 @@ class ListingsPage extends StatelessWidget {
                                     .fetchListings(),
                             child: state is ListingsLoading
                                 ? const SizedBox(
-                                    height: 20,
-                                    width: 20,
+                                    height: AppSpacing.loadingIndicatorSize,
+                                    width: AppSpacing.loadingIndicatorSize,
                                     child: CircularProgressIndicator(
-                                        color: Colors.white, strokeWidth: 2),
+                                        color: AppColors.textWhite,
+                                        strokeWidth: 2),
                                   )
                                 : Text(
                                     l10n.fetchButton,
@@ -142,17 +128,17 @@ class ListingsPage extends StatelessWidget {
                     ),
                   ),
                 ),
-                const SizedBox(height: 16),
+                const SizedBox(height: AppSpacing.lg),
 
                 // ── Error ─────────────────────────────────
                 if (state is ListingsError)
                   Center(
                     child: Padding(
-                      padding: const EdgeInsets.all(24),
+                      padding: const EdgeInsets.all(AppSpacing.xl),
                       child: Text(
                         state.message,
                         textAlign: TextAlign.center,
-                        style: const TextStyle(color: Colors.red),
+                        style: const TextStyle(color: AppColors.textRed),
                       ),
                     ),
                   )
@@ -162,10 +148,10 @@ class ListingsPage extends StatelessWidget {
                     state is ListingsFilterUpdated)
                   Center(
                     child: Padding(
-                      padding: const EdgeInsets.all(40),
+                      padding: const EdgeInsets.all(AppSpacing.xxl),
                       child: Text(
                         l10n.emptyState,
-                        style: const TextStyle(color: Colors.grey),
+                        style: const TextStyle(color: AppColors.textGrey),
                       ),
                     ),
                   )
@@ -186,7 +172,7 @@ class ListingsPage extends StatelessWidget {
                               ),
                         style: const TextStyle(fontWeight: FontWeight.bold),
                       ),
-                      const SizedBox(height: 8),
+                      const SizedBox(height: AppSpacing.sm),
                       ListView.builder(
                         shrinkWrap: true,
                         physics: const NeverScrollableScrollPhysics(),
@@ -194,19 +180,18 @@ class ListingsPage extends StatelessWidget {
                         itemBuilder: (context, i) {
                           final listing = state.listings[i];
                           return Card(
-                            margin: const EdgeInsets.only(bottom: 10),
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(10)),
+                            margin: const EdgeInsets.only(bottom: AppSpacing.sm),
                             child: Padding(
-                              padding: const EdgeInsets.all(14),
+                              padding: const EdgeInsets.all(AppSpacing.listingPadding),
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Row(
                                     children: [
                                       const Icon(Icons.home,
-                                          color: Color(0xFFFF5A5F), size: 18),
-                                      const SizedBox(width: 6),
+                                          color: AppColors.primary,
+                                          size: AppSpacing.iconLg),
+                                      const SizedBox(width: AppSpacing.xs + 2),
                                       Expanded(
                                         child: Text(
                                           listing.name ??
@@ -219,31 +204,35 @@ class ListingsPage extends StatelessWidget {
                                       ),
                                     ],
                                   ),
-                                  const SizedBox(height: 6),
+                                  const SizedBox(height: AppSpacing.xs + 2),
                                   Row(
                                     children: [
                                       const Icon(Icons.location_on,
-                                          size: 13, color: Colors.grey),
-                                      const SizedBox(width: 3),
+                                          size: AppSpacing.iconSm,
+                                          color: AppColors.iconGrey),
+                                      const SizedBox(width: AppSpacing.xs - 1),
                                       Text(
                                         listing.neighbourhood ??
                                             listing.suburb ??
                                             '—',
                                         style: const TextStyle(
-                                            fontSize: 12, color: Colors.grey),
+                                            fontSize: 12,
+                                            color: AppColors.textGrey),
                                       ),
-                                      const SizedBox(width: 8),
+                                      const SizedBox(width: AppSpacing.sm),
                                       const Icon(Icons.bed,
-                                          size: 13, color: Colors.grey),
-                                      const SizedBox(width: 3),
+                                          size: AppSpacing.iconSm,
+                                          color: AppColors.iconGrey),
+                                      const SizedBox(width: AppSpacing.xs - 1),
                                       Text(
                                         listing.roomType ?? '—',
                                         style: const TextStyle(
-                                            fontSize: 12, color: Colors.grey),
+                                            fontSize: 12,
+                                            color: AppColors.textGrey),
                                       ),
                                     ],
                                   ),
-                                  const SizedBox(height: 6),
+                                  const SizedBox(height: AppSpacing.xs + 2),
                                   Row(
                                     children: [
                                       Text(
@@ -251,16 +240,18 @@ class ListingsPage extends StatelessWidget {
                                             listing.price ?? '?'),
                                         style: const TextStyle(
                                           fontWeight: FontWeight.bold,
-                                          color: Color(0xFFFF5A5F),
+                                          color: AppColors.primary,
                                         ),
                                       ),
                                       const Spacer(),
                                       const Icon(Icons.star,
-                                          size: 14, color: Colors.amber),
+                                          size: AppSpacing.iconMd,
+                                          color: AppColors.iconAmber),
                                       Text(
                                         ' ${l10n.reviewCount(listing.numberOfReviews ?? 0)}',
                                         style: const TextStyle(
-                                            fontSize: 12, color: Colors.grey),
+                                            fontSize: 12,
+                                            color: AppColors.textGrey),
                                       ),
                                     ],
                                   ),
